@@ -17,6 +17,12 @@ if { ![catch { package require mtls }] } {
 
     http::register https 443 [list ::tls::socket -autoservername true -ssl2 false -ssl3 false]
 
+} else {
+
+    return -code error "could not find any TLS/SSL provider.\
+        Please install tclmtls[expr { $tcl_platform(platform) eq "windows" ? ", twapi" : "" }]\
+        or tcltls."
+
 }
 
 package provide https 0.1.0

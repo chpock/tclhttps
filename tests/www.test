@@ -1,0 +1,55 @@
+# Copyright (c) 2024 Konstantin Kushnir <chpock@gmail.com>
+#
+# See the file "license.terms" for information on usage and redistribution
+# of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest
+    namespace import ::tcltest::*
+}
+
+package require https
+
+test https-www-1.1 { Test a request to google.com } -body {
+    set token [http::geturl "https://google.com"]
+    regexp -nocase {<title>([^>]+)</title>} [http::data $token] -> title
+    set code [http::code $token]
+    set result "$code:$title"
+} -cleanup {
+    catch { http::cleanup $token }
+    unset -nocomplain token title code result
+} -result {HTTP/1.1 301 Moved Permanently:301 Moved}
+
+test https-www-1.2 { Test a request to www.google.com } -body {
+    set token [http::geturl "https://www.google.com"]
+    regexp -nocase {<title>([^>]+)</title>} [http::data $token] -> title
+    set code [http::code $token]
+    set result "$code:$title"
+} -cleanup {
+    catch { http::cleanup $token }
+    unset -nocomplain token title code result
+} -result {HTTP/1.1 200 OK:Google}
+
+test https-www-1.3 { Test a request to example.com } -body {
+    set token [http::geturl "https://example.com"]
+    regexp -nocase {<title>([^>]+)</title>} [http::data $token] -> title
+    set code [http::code $token]
+    set result "$code:$title"
+} -cleanup {
+    catch { http::cleanup $token }
+    unset -nocomplain token title code result
+} -result {HTTP/1.1 200 OK:Example Domain}
+
+test https-www-1.4 { Test a request to www.howsmyssl.com } -body {
+    set token [http::geturl "https://www.howsmyssl.com"]
+    regexp -nocase {<title>([^>]+)</title>} [http::data $token] -> title
+    set code [http::code $token]
+    set result "$code:$title"
+} -cleanup {
+    catch { http::cleanup $token }
+    unset -nocomplain token title code result
+} -result {HTTP/1.1 200 OK:How's My SSL?}
+
+# cleanup
+cleanupTests
+return

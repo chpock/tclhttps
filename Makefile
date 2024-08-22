@@ -3,6 +3,11 @@ VERSION := $(shell cat pkgIndex.tcl | grep -F 'package ifneeded https' | awk '{p
 INSTALL_DIR = $(PREFIX)/lib/tclhttps$(VERSION)
 WORKING_DIR_ABSOLUTE = $(shell pwd)
 
+override TESTFLAGS += -verbose "body error start"
+
+TCLSH ?= tclsh
+TCLSH_EXE = TCLLIBPATH="$(WORKING_DIR_ABSOLUTE)" $(TCLSH)
+
 .PHONY: all
 all:
 	@echo "Nothing needs to be done."
@@ -14,4 +19,4 @@ install:
 
 .PHONY: test
 test:
-	@echo "Nothing needs to be done."
+	$(TCLSH_EXE) tests/all.tcl $(TESTFLAGS)
