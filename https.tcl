@@ -13,7 +13,7 @@ if { ![catch { package require mtls }] } {
 
     http::register https 443 ::twapi::tls_socket
 
-} else if { ![catch { package require tls }] } {
+} elseif { ![catch { package require tls }] } {
 
     http::register https 443 [list ::tls::socket -autoservername true -ssl2 false -ssl3 false]
 
